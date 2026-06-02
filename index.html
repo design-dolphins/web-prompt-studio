@@ -30,13 +30,13 @@
                 作りたいもの
                 <select id="mode" name="mode">
                   <option value="custom">自由に作る</option>
-                  <option value="brainstorm">アイデア出し</option>
-                  <option value="minutes">議事録・要約リライト</option>
                   <option value="competitor">競合分析</option>
                   <option value="sitedesign">サイト設計</option>
                   <option value="wireframe">ワイヤーフレーム</option>
                   <option value="design-direction">デザイン指示書</option>
                   <option value="ui-review">デザインレビュー</option>
+                  <option value="minutes">議事録・要約リライト</option>
+                  <option value="illust">イラスト生成</option>
                 </select>
                 <small class="field-hint" id="modeHint"></small>
               </label>
@@ -109,12 +109,12 @@
 
               <label>
                 AIの役割
-                <input id="customRole" name="customRole" type="text" placeholder="例：Webディレクター、コピーライター、SEOコンサルタント、UXライター" />
+                <input id="customRole" name="customRole" type="text" placeholder="例：マーケター、Webデザイナー、採用コンサルタント、税理士" />
               </label>
 
               <label>
                 目的
-                <textarea id="customGoal" name="customGoal" rows="3" placeholder="例：クライアントに制作費の値上げを納得してもらいたい、サイトのキャッチコピーを3案考えたい"></textarea>
+                <textarea id="customGoal" name="customGoal" rows="3" placeholder="例：ITエンジニアからPMへの転職に必要なスキルを知りたい"></textarea>
               </label>
 
               <label>
@@ -124,7 +124,7 @@
 
               <label>
                 背景・状況（任意）
-                <textarea id="customBackground" name="customBackground" rows="3" placeholder="例：BtoB企業のコーポレートサイトリニューアル、予算100万円・納期2ヶ月"></textarea>
+                <textarea id="customBackground" name="customBackground" rows="3" placeholder="例：30代前半、エンジニア歴5年、マネジメント経験なし"></textarea>
               </label>
 
               <label>
@@ -134,7 +134,7 @@
 
               <label>
                 条件・制約（任意）
-                <textarea id="customConditions" name="customConditions" rows="3" placeholder="例：専門用語を使わない、クライアントが承認しやすい表現で"></textarea>
+                <textarea id="customConditions" name="customConditions" rows="3" placeholder="例：有料サービスは除外、専門用語を使わない"></textarea>
               </label>
             </fieldset>
 
@@ -174,6 +174,17 @@
                 </select>
               </label>
 
+              <label>
+                会議の種類
+                <select id="minType" name="minType">
+                  <option value="定例会">定例会</option>
+                  <option value="提案MTG">提案MTG</option>
+                  <option value="要件定義">要件定義</option>
+                  <option value="UI/UXレビュー">UI/UXレビュー</option>
+                  <option value="キックオフ">キックオフ</option>
+                  <option value="その他">その他</option>
+                </select>
+              </label>
 
               <label>
                 議事メモ・文字起こし
@@ -406,7 +417,139 @@
               </label>
             </fieldset>
 
-            
+            <fieldset id="fieldset-illust" style="display:none">
+              <legend>イラスト設定</legend>
+
+              <label>
+                スタイル
+                <select id="illustStyle" name="illustStyle">
+                  <option value="flat">フラットベクター</option>
+                  <option value="isometric">アイソメトリック</option>
+                  <option value="icon">アイコン</option>
+                </select>
+              </label>
+
+              <label>
+                テーマ
+                <input id="illustTheme" name="illustTheme" type="text" placeholder="例：Tokyo、コーヒーショップ、病院" />
+              </label>
+
+              <label id="illustColorToneRow">
+                カラートーン
+                <select id="illustColorTone" name="illustColorTone">
+                  <option value="soft">ソフト＆明るい</option>
+                  <option value="muted">ミュート＆落ち着き</option>
+                  <option value="vivid">ビビッド</option>
+                </select>
+              </label>
+
+              <!-- フラットベクター用フィールド -->
+              <div id="illustFlatFields">
+                <label>
+                  背景
+                  <select id="illustBg" name="illustBg">
+                    <option value="solid">あり（テーマカラー）</option>
+                    <option value="white">あり（白）</option>
+                    <option value="transparent">なし（透明）</option>
+                  </select>
+                </label>
+
+                <label>
+                  人物
+                  <select id="illustFigure" name="illustFigure">
+                    <option value="include">含む</option>
+                    <option value="main">人物メイン</option>
+                    <option value="none">なし</option>
+                  </select>
+                </label>
+
+                <label id="figureCountRow">
+                  人物の数
+                  <select id="illustFigureCount" name="illustFigureCount">
+                    <option value="1">1人</option>
+                    <option value="2-3">2〜3人</option>
+                    <option value="4-6">4〜6人</option>
+                    <option value="many">大勢（7人以上）</option>
+                  </select>
+                </label>
+
+                <label id="framingRow">
+                  フレーミング
+                  <select id="illustFraming" name="illustFraming">
+                    <option value="full">全身</option>
+                    <option value="bust">バストアップ</option>
+                    <option value="face">フェイスアップ</option>
+                  </select>
+                </label>
+
+                <label>
+                  散りばめる要素（任意）
+                  <input id="illustElements" name="illustElements" type="text" placeholder="例：コーヒーカップ、本、植物、自転車、ノートPC" />
+                </label>
+
+                <label>
+                  スタイル参照（任意）
+                  <input id="illustStyleRef" name="illustStyleRef" type="text" placeholder="例：バウハウス、北欧ポスター、ミッドセンチュリー、リソグラフ" />
+                </label>
+              </div>
+
+              <!-- アイソメトリック用フィールド -->
+              <div id="illustIsoFields" style="display:none">
+                <label>
+                  カテゴリ
+                  <select id="illustCategory" name="illustCategory">
+                    <option value="mix">おまかせ</option>
+                    <option value="building">建物</option>
+                    <option value="item">アイテム</option>
+                    <option value="vehicle">乗り物</option>
+                    <option value="people">人物</option>
+                    <option value="nature">自然</option>
+                  </select>
+                </label>
+
+                <label>
+                  向き
+                  <select id="illustDirection" name="illustDirection">
+                    <option value="mix">ミックス（おまかせ）</option>
+                    <option value="left">左向き</option>
+                    <option value="right">右向き</option>
+                    <option value="back-left">後ろ向き・左</option>
+                    <option value="back-right">後ろ向き・右</option>
+                  </select>
+                </label>
+
+                <label>
+                  含めたいオブジェクト（任意）
+                  <textarea id="illustObjects" name="illustObjects" rows="3" placeholder="例：Tokyo Tower、鳥居、路面電車、桜の木"></textarea>
+                </label>
+              </div>
+
+              <!-- アイコン用フィールド -->
+              <div id="illustIconFields" style="display:none">
+                <label>
+                  サイズ
+                  <select id="illustIconSize" name="illustIconSize">
+                    <option value="24">24px（標準）</option>
+                    <option value="16">16px（小）</option>
+                    <option value="32">32px（中）</option>
+                    <option value="48">48px（大）</option>
+                    <option value="64">64px（特大）</option>
+                  </select>
+                </label>
+
+                <label>
+                  線の太さ
+                  <select id="illustIconStroke" name="illustIconStroke">
+                    <option value="2">2px（標準）</option>
+                    <option value="1">1px（細め）</option>
+                    <option value="1.5">1.5px</option>
+                    <option value="2.5">2.5px</option>
+                    <option value="3">3px（太め）</option>
+                  </select>
+                </label>
+              </div>
+
+            </fieldset>
 
 
             <fieldset id="fieldset-request" style="display:none">
