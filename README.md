@@ -1,4 +1,4 @@
-# Prompt Maker
+# Prompt Studio
 
 モードを選んで条件を入力するだけで、ChatGPTに使えるプロンプトを自動生成するWebアプリです。
 
