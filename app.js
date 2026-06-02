@@ -80,6 +80,7 @@ const fields = {
   bsGoal: document.querySelector("#bsGoal"),
   bsTone: document.querySelector("#bsTone"),
   bsMaterials: document.querySelector("#bsMaterials"),
+  bsNotes: document.querySelector("#bsNotes"),
 };
 
 const modeLabels = {
@@ -557,7 +558,7 @@ function buildBrainstormPrompt(state) {
     (state.bsMaterials || "").trim()
       ? `# 【参考情報・素材】\n${state.bsMaterials.trim()}`
       : "# 【参考情報・素材】\n記載がない場合は一般的な想定で補完してください。",
-    (state.request || "").trim() ? `\n# 【補足】\n${state.request.trim()}` : null,
+    (state.bsNotes || "").trim() ? `\n# 【補足】\n${state.bsNotes.trim()}` : null,
     "",
     "# 【制約条件】",
     "- 実現可能性の低すぎる施策は除外する",
@@ -1044,14 +1045,13 @@ function updateIllustVisibility(mode) {
   document.querySelector("#fieldset-finish").style.display  = hasDedicated ? "none" : "";
 
   // 補足欄: illust/minutes/customは非表示、他の専用モードは表示（下部に）
-  const hideRequest = isMinutes || isCustom || isCompetitor || isSiteDesign;
+  const hideRequest = isMinutes || isCustom || isCompetitor || isSiteDesign || isBrainstorm;
   document.querySelector("#fieldset-request").style.display = hideRequest ? "none" : "";
   document.querySelector("#wfSectionsGroup").style.display = isWireframe ? "" : "none";
   document.querySelector("#wfNotesGroup").style.display = isWireframe ? "" : "none";
   document.querySelector("#uiOptionalGroup").style.display = isUiReview ? "" : "none";
   document.querySelector("#designOptionalGroup").style.display = isDesign ? "" : "none";
   document.querySelector("#researchOptionalGroup").style.display = isResearch ? "" : "none";
-  document.querySelector("#brainstormOptionalGroup").style.display = isBrainstorm ? "" : "none";
 
   // 補足欄のラベルとplaceholderをモードに合わせて変更
   if (!hideRequest) {

@@ -165,6 +165,31 @@
                 <input id="bsGoal" name="bsGoal" type="text" placeholder="例：売上UP、認知拡大、CV向上、採用強化、UI改善" />
               </label>
 
+              <div id="brainstormOptionalGroup">
+                <p class="optional-section-label">任意</p>
+
+                <label>
+                  施策のトーン
+                  <select id="bsTone" name="bsTone">
+                    <option value="バランス重視">バランス重視</option>
+                    <option value="攻め・革新的">攻め・革新的</option>
+                    <option value="守り・保守的">守り・保守的</option>
+                    <option value="低コスト優先">低コスト優先</option>
+                    <option value="スピード優先">スピード優先</option>
+                  </select>
+                </label>
+
+                <label>
+                  参考情報・素材
+                  <textarea id="bsMaterials" name="bsMaterials" rows="3" placeholder="例：既存施策一覧、競合情報、ターゲット情報、予算感、USP"></textarea>
+                </label>
+
+                <label>
+                  補足・その他
+                  <textarea id="bsNotes" name="bsNotes" rows="3" placeholder="例：追加で気になる点や希望があれば"></textarea>
+                </label>
+              </div>
+
             </fieldset>
 
             <fieldset id="fieldset-minutes" style="display:none">
@@ -466,23 +491,6 @@
                 <label>
                   特に見たい観点
                   <input id="researchFocus" name="researchFocus" type="text" placeholder="例：価格、UX、SEO、集客、機能比較" />
-                </label>
-              </div>
-
-              <div id="brainstormOptionalGroup" style="display:none">
-                <label>
-                  施策のトーン
-                  <select id="bsTone" name="bsTone">
-                    <option value="バランス重視">バランス重視</option>
-                    <option value="攻め・革新的">攻め・革新的</option>
-                    <option value="守り・保守的">守り・保守的</option>
-                    <option value="低コスト優先">低コスト優先</option>
-                    <option value="スピード優先">スピード優先</option>
-                  </select>
-                </label>
-                <label>
-                  参考情報・素材
-                  <textarea id="bsMaterials" name="bsMaterials" rows="3" placeholder="例：既存施策一覧、競合情報、ターゲット情報、予算感、USP"></textarea>
                 </label>
               </div>
 
