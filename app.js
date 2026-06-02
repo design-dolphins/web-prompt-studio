@@ -1135,6 +1135,73 @@ function buildPrompt(state) {
     .join("\n");
 }
 
+function updateIllustVisibility(mode) {
+  const isWireframe = mode === "wireframe";
+  const isProposal  = mode === "proposal";
+  const isUiReview  = mode === "ui-review";
+  const isDesign    = mode === "design-direction";
+  const isSiteDesign = mode === "sitedesign";
+  const isCompetitor = mode === "competitor";
+  const isResearch  = mode === "research";
+  const isMinutes   = mode === "minutes";
+  const isBrainstorm = mode === "brainstorm";
+  const isCustom    = mode === "custom";
+  const isEmailMode = mode === "email";
+
+  const hasDedicated = isWireframe || isProposal || isUiReview ||
+                       isDesign || isResearch || isCompetitor || isSiteDesign || isMinutes || isBrainstorm || isCustom || isEmailMode;
+
+  document.querySelector("#fieldset-wireframe").style.display = isWireframe ? "" : "none";
+  document.querySelector("#fieldset-proposal").style.display  = isProposal  ? "" : "none";
+  document.querySelector("#fieldset-uireview").style.display  = isUiReview  ? "" : "none";
+  document.querySelector("#fieldset-design").style.display    = isDesign    ? "" : "none";
+  document.querySelector("#fieldset-sitedesign").style.display = isSiteDesign ? "" : "none";
+  document.querySelector("#fieldset-competitor").style.display = isCompetitor ? "" : "none";
+  document.querySelector("#fieldset-research").style.display  = isResearch  ? "" : "none";
+  if (isResearch) {
+    const theme = document.querySelector("#researchTheme");
+    const purpose = document.querySelector("#researchPurpose");
+    if (theme && purpose) theme.placeholder = researchThemePlaceholders[purpose.value] || "";
+  }
+  document.querySelector("#fieldset-minutes").style.display   = isMinutes   ? "" : "none";
+  document.querySelector("#fieldset-brainstorm").style.display = isBrainstorm ? "" : "none";
+  document.querySelector("#fieldset-email").style.display     = isEmailMode ? "" : "none";
+  document.querySelector("#fieldset-custom").style.display    = isCustom    ? "" : "none";
+
+  document.querySelector("#fieldset-extras").style.display  = hasDedicated ? "none" : "";
+  document.querySelector("#optionsFieldset").style.display  = hasDedicated ? "none" : "";
+  document.querySelector("#fieldset-finish").style.display  = hasDedicated ? "none" : "";
+
+  const hideRequest = isMinutes || isCustom || isCompetitor || isSiteDesign;
+  document.querySelector("#fieldset-request").style.display = hideRequest ? "none" : "";
+  document.querySelector("#wfSectionsGroup").style.display = isWireframe ? "" : "none";
+  document.querySelector("#wfNotesGroup").style.display = isWireframe ? "" : "none";
+  document.querySelector("#uiOptionalGroup").style.display = isUiReview ? "" : "none";
+  document.querySelector("#designOptionalGroup").style.display = isDesign ? "" : "none";
+  document.querySelector("#researchOptionalGroup").style.display = isResearch ? "" : "none";
+  document.querySelector("#brainstormOptionalGroup").style.display = isBrainstorm ? "" : "none";
+
+  if (!hideRequest) {
+    const requestLegendEl  = document.querySelector("#requestLegend");
+    const requestLabelText = document.querySelector("#requestLabelText");
+    const requestTextarea  = document.querySelector("#request");
+    if (hasDedicated) {
+      requestLegendEl.textContent = "任意";
+      if (isWireframe) {
+        requestLabelText.textContent = "作成の背景・ひとこと";
+        requestTextarea.placeholder = "例：初回クライアント提案用。シンプルに見せたい。";
+      } else {
+        requestLabelText.textContent = "補足・その他";
+        requestTextarea.placeholder = "例：追加で気になる点や希望があれば";
+      }
+    } else {
+      requestLegendEl.textContent = "";
+      requestLabelText.textContent = "依頼内容";
+      requestTextarea.placeholder = "ここに相談内容・タスクの詳細を入力してください";
+    }
+  }
+}
+
 function updatePrompt() {
   const state = getState();
   updateIllustVisibility(state.mode);
