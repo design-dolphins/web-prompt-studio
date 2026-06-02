@@ -1202,6 +1202,83 @@ function updateIllustVisibility(mode) {
   }
 }
 
+function updateWfSectionsPlaceholder(pageType) {
+  const textarea = document.querySelector("#wfSections");
+  const currentVal = textarea.value;
+  const knownExamples = Object.values(wfSectionsExamples).filter(v => v !== "");
+  const isUnedited = knownExamples.includes(currentVal);
+  if (isUnedited) {
+    textarea.value = wfSectionsExamples[pageType] ?? "";
+    updatePrompt();
+  }
+}
+
+function renderOptions(mode) {
+  const config = templateConfigs[mode] || templateConfigs.custom;
+  const container = document.querySelector("#optionsContainer");
+  container.innerHTML = "";
+  config.options.forEach((opt) => {
+    const label = document.createElement("label");
+    label.className = "check-row";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.value = opt;
+    cb.name = "option";
+    cb.addEventListener("change", updatePrompt);
+    const span = document.createElement("span");
+    span.textContent = opt;
+    label.appendChild(cb);
+    label.appendChild(span);
+    container.appendChild(label);
+  });
+}
+
+function getSelectedOptions() {
+  return Array.from(document.querySelectorAll("#optionsContainer input[type=checkbox]:checked")).map((cb) => cb.value);
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  window.clearTimeout(showToast.timer);
+  showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+function getState() {
+  return Object.fromEntries(
+    Object.entries(fields).map(([key, field]) => [key, field ? (field.type === "checkbox" ? field.checked : field.value.trim()) : ""]),
+  );
+}
+
+function applyState(state) {
+  const mode = state.mode || defaults.mode;
+  renderOptions(mode);
+  if (state.selectedOptions) {
+    const selected = state.selectedOptions.split(",");
+    document.querySelectorAll("#optionsContainer input[type=checkbox]").forEach((cb) => {
+      cb.checked = selected.includes(cb.value);
+    });
+  }
+  Object.entries({ ...defaults, ...state }).forEach(([key, value]) => {
+    if (!fields[key]) return;
+    if (fields[key].type === "checkbox") fields[key].checked = Boolean(value);
+    else fields[key].value = value;
+  });
+  updatePrompt();
+}
+
+function line(label, value) {
+  return value ? `- ${label}: ${value}` : "";
+}
+
+function bulletList(items) {
+  return items.map((item) => `- ${item}`).join("\n");
+}
+
+function numberedList(items) {
+  return items.map((item, index) => `${index + 1}. **${item}**`).join("\n");
+}
+
 function updatePrompt() {
   const state = getState();
   updateIllustVisibility(state.mode);
