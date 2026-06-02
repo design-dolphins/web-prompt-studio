@@ -16,20 +16,6 @@ const fields = {
   inferMissing: document.querySelector("#inferMissing"),
   askQuestions: document.querySelector("#askQuestions"),
   includeSummary: document.querySelector("#includeSummary"),
-  illustStyle: document.querySelector("#illustStyle"),
-  illustCategory: document.querySelector("#illustCategory"),
-  illustDirection: document.querySelector("#illustDirection"),
-  illustIconSize: document.querySelector("#illustIconSize"),
-  illustIconStroke: document.querySelector("#illustIconStroke"),
-  illustBg: document.querySelector("#illustBg"),
-  illustFigure: document.querySelector("#illustFigure"),
-  illustFigureCount: document.querySelector("#illustFigureCount"),
-  illustFraming: document.querySelector("#illustFraming"),
-  illustObjects: document.querySelector("#illustObjects"),
-  illustColorTone: document.querySelector("#illustColorTone"),
-  illustTheme: document.querySelector("#illustTheme"),
-  illustElements: document.querySelector("#illustElements"),
-  illustStyleRef: document.querySelector("#illustStyleRef"),
   wfPageType: document.querySelector("#wfPageType"),
   wfOutputType: document.querySelector("#wfOutputType"),
   wfCompany: document.querySelector("#wfCompany"),
@@ -76,7 +62,6 @@ const fields = {
   researchOwnUrl: document.querySelector("#researchOwnUrl"),
   researchTargets: document.querySelector("#researchTargets"),
   researchFocus: document.querySelector("#researchFocus"),
-  minType: document.querySelector("#minType"),
   minFormat: document.querySelector("#minFormat"),
   minWish: document.querySelector("#minWish"),
   minContent: document.querySelector("#minContent"),
@@ -109,7 +94,6 @@ const modeLabels = {
   competitor: "競合分析",
   research: "リサーチ・競合分析",
   custom: "自由に作る",
-  illust: "イラスト生成",
 };
 
 const modeHints = {
@@ -124,7 +108,6 @@ const modeHints = {
   competitor: "競合サイトを分析して、差別化戦略と打ち出し方を考えたい時。",
   research: "競合、顧客、業界、参考事例を整理したい時。",
   custom: "上にない用途を自由に作りたい時。",
-  illust: "フラットベクター編集イラストの画像生成プロンプトを作りたい時。",
 };
 
 const exampleRequests = {
@@ -139,7 +122,6 @@ const exampleRequests = {
   competitor: "",
   research: "",
   custom: "",
-  illust: "",
 };
 
 const roleMap = {
@@ -154,7 +136,6 @@ const roleMap = {
   competitor: "Web戦略コンサルタント兼競合分析AI",
   research: "市場分析コンサルタント兼リサーチAI",
   custom: "プロンプトエンジニア兼専門領域支援AI",
-  illust: "フラットベクターイラスト生成AI",
 };
 
 const templateConfigs = {
@@ -373,13 +354,6 @@ const templateConfigs = {
     output: ["要件整理（Before→After）", "最適化されたプロンプト本文（コピペで実行可能）", "改善ポイント・追加で明示すべき情報（ユーザー向け）"],
     options: ["複数提示（A/B/Cパターン）", "実装工程 or モック工程に接続する補足案", "ターゲット別カスタム", "国内 / グローバル仕様", "トーン選択（フォーマル / カジュアル / クリエイティブ）"],
   },
-  illust: {
-    goals: [],
-    constraints: [],
-    materials: [],
-    output: [],
-    options: [],
-  },
 };
 
 const outputLabels = {
@@ -432,10 +406,6 @@ const defaults = {
   customBackground: "",
   customOutput: "",
   customConditions: "",
-  illustStyle: "flat",
-  illustColorTone: "soft",
-  illustElements: "",
-  illustStyleRef: "",
 };
 
 function buildWireframePrompt(state) {
@@ -615,7 +585,7 @@ function buildMinutesPrompt(state) {
   const isEmail = state.minFormat === "email";
 
   const metaLines = [
-    `- 会議の種類：${state.minType || "定例会"}`,
+    
     opt("どう出してほしいか", state.minWish),
     opt("補足", state.request),
   ].filter(Boolean);
@@ -1022,201 +992,6 @@ function buildProposalPrompt(state) {
   ].join("\n");
 }
 
-function buildIllustPrompt(state) {
-  const theme = (state.illustTheme || state.request || '').trim() || 'テーマを入力してください';
-
-  // アイコン
-  if (state.illustStyle === "icon") {
-    const size   = state.illustIconSize   || "24";
-    const stroke = state.illustIconStroke || "2";
-    return [
-      `[テーマ]に関連するアイコンを6〜8個、セットで作成してください。`.replace("[テーマ]", theme),
-      `スタイルは統一されたアウトラインアイコン、線の太さ${stroke}px相当で均一に。`,
-      "モノクロ（黒線・白背景）、シンプルで視認性の高いデザイン。",
-      `各アイコンのサイズは${size}px基準で統一。`,
-      "グリッド上に整列して配置。",
-    ].join("\n");
-  }
-
-  // アイソメトリック
-  if (state.illustStyle === "isometric") {
-    const colorTonePeople = {
-      soft:  "Bright clean palette. Bright white clothing. Soft and light accent colors. Each character limited to 2–3 colors. Consistent color palette across the entire collection.",
-      muted: "Calm muted palette. Bright white clothing. Muted and desaturated accent colors. Each character limited to 2–3 colors. Consistent color palette across the entire collection.",
-      vivid: "Bright clean palette. Bright white clothing. Fresh accent colors. Bold and vivid accent colors. Each character limited to 2–3 colors. Consistent color palette across the entire collection.",
-    };
-    const colorToneObject = {
-      soft:  "Bright clean palette. Soft and light colors. Each object limited to 2–3 colors. Consistent color palette across the entire collection.",
-      muted: "Calm muted palette. Desaturated and quiet tones. Each object limited to 2–3 colors. Consistent color palette across the entire collection.",
-      vivid: "Bright clean palette. Bold and vivid accent colors. Each object limited to 2–3 colors. Consistent color palette across the entire collection.",
-    };
-
-    const objects = (state.illustObjects || "").trim();
-    const isPeople = state.illustCategory === "people" || state.illustCategory === "mix" || !state.illustCategory;
-
-    const categoryContentMap = {
-      building: `${theme}に関連する建物・ランドマーク・施設を8点、それぞれ異なる種類・用途でAIが考えて構成する。`,
-      item:     `${theme}に関連する小物・アイテム・道具を8点、それぞれ異なる種類でAIが考えて構成する。`,
-      vehicle:  `${theme}に関連する乗り物・交通手段を8点、それぞれ異なる種類でAIが考えて構成する。`,
-      nature:   `${theme}に関連する自然・植物・動物を8点、それぞれ異なる種類でAIが考えて構成する。`,
-      people:   `${theme}に関連するスタッフ、店員、客、作業スタッフなどをテーマに、異なる役割・ポーズ・シーンの人物8点を構成する。`,
-      mix:      `${theme}に関連する人物・建物・小物・乗り物などを幅広くミックスして8点を構成する。`,
-    };
-
-    const directionMap = {
-      left:       "All objects / figures facing left-forward direction.",
-      right:      "All objects / figures facing right-forward direction.",
-      "back-left":  "All objects / figures facing away from the viewer, turned toward the left.",
-      "back-right": "All objects / figures facing away from the viewer, turned toward the right.",
-      mix:        null,
-    };
-    const directionText = directionMap[state.illustDirection] || null;
-    const contentText = objects || categoryContentMap[state.illustCategory] || categoryContentMap.people;
-    const colorTone = isPeople
-      ? (colorTonePeople[state.illustColorTone] || colorTonePeople.soft)
-      : (colorToneObject[state.illustColorTone] || colorToneObject.soft);
-    const collectionLabel = isPeople ? "人物キャラクター" : "素材";
-
-    return [
-      `${theme}の${collectionLabel}アセットコレクション。純白の背景。8点の素材を均等なグリッドレイアウトで配置。各オブジェクトは独立して配置され、重なりなし、統一スケール、十分な余白。`,
-      contentText,
-      "",
-      "Japanese stock illustration aesthetic.",
-      isPeople ? "Flat vector people asset collection." : "Flat vector object asset collection.",
-      "Pseudo-isometric view.",
-      "Almost two-dimensional appearance.",
-      "Minimal isometric hint.",
-      "Extremely weak three-dimensionality.",
-      isPeople ? "Extremely simplified human figures." : "Extremely simplified objects.",
-      "Large flat color areas.",
-      "Large uninterrupted color blocks.",
-      "Paper-cut style vector shapes.",
-      "Minimal contour variation.",
-      "Minimal visual information.",
-      "Geometric simplification.",
-      "Clean vector shapes.",
-      "Soft controlled curves.",
-      "Smooth rounded silhouettes.",
-      isPeople ? "Face without eyes, mouth, nose, eyebrows or facial details." : null,
-      isPeople ? "Hair represented as a single simple shape." : null,
-      isPeople ? "Hair colors limited to warm brown, chestnut brown, medium brown and light brown." : null,
-      isPeople ? "Tall and slim proportions." : null,
-      isPeople ? "Long legs relative to torso." : null,
-      isPeople ? "Lightweight silhouette." : null,
-      isPeople ? "Simplified hands and feet." : null,
-      isPeople ? "Simplified clothing." : null,
-      isPeople ? "No clothing folds." : null,
-      isPeople ? "No wrinkles." : null,
-      isPeople ? "No seams." : null,
-      isPeople ? "No fabric texture." : null,
-      "No decorative details.",
-      colorTone,
-      directionText,
-      isPeople ? "Characters are isolated assets." : "Objects are isolated assets.",
-      isPeople ? "Characters are the primary subject." : "Objects are the primary subject.",
-      "Props are symbolic only.",
-      "Minimal prop detail.",
-      "No scene construction.",
-      "No environmental storytelling.",
-      "No realistic details.",
-      "Pure flat appearance.",
-      "No outlines.",
-      "No strokes.",
-      "No shadows.",
-      "No gradients.",
-      "No textures.",
-      "No lighting effects.",
-      "No reflections.",
-      "No ambient occlusion.",
-      "No realistic rendering.",
-      "No volumetric modeling.",
-      "No sculpted forms.",
-      "Pure white background.",
-      "",
-      "Negative prompt:\nphotorealistic, realistic face, anime, manga, detailed eyes, detailed hands, realistic anatomy, muscular body, chibi, super deformed, mascot character, thick outlines, black stroke, shadows, gradient shading, texture, glossy material, 3D render, clay render, dramatic lighting, perspective view, interior scene, environmental storytelling, decorative elements, cluttered composition, excessive details, strong depth, strong three-dimensionality, volumetric shading",
-      "",
-      "8K",
-    ].filter(v => v !== null).join("\n");
-  }
-
-  // フラットベクター
-  const colorToneFlat = {
-    soft:  "やわらかく明るいトーンで、親しみやすい色合い",
-    muted: "落ち着いたミュートトーンで、洗練された色合い",
-    vivid: "鮮やかでコントラストの強いビビッドな色合い",
-  };
-
-  const bgInstructions = {
-    "solid": `${theme}のテーマカラーを使ったソリッドな背景色`,
-    "white": "白（#FFFFFF）の背景",
-    "transparent": "透明背景（背景なし）",
-  };
-
-  const framingLabels = {
-    "full": "全身が見えるフルショット",
-    "bust": "胸から上のバストアップ",
-    "face": "顔・表情にフォーカスしたフェイスアップ",
-  };
-
-  let figureText = "";
-  if (state.illustFigure === "none") {
-    figureText = "人物は含めず、オブジェクトとシーンのみで構成します。";
-  } else {
-    const framing = framingLabels[state.illustFraming] || framingLabels["full"];
-    const countLabels = {
-      "1":    "1人の",
-      "2-3":  "2〜3人の",
-      "4-6":  "4〜6人の",
-      "many": "7人以上の",
-    };
-    const countText = countLabels[state.illustFigureCount] || "1人の";
-    const multiNote = (state.illustFigureCount !== "1")
-      ? "それぞれ異なるポーズ・動作（くつろぐ、歩く、食べる、読む、楽しむなど）で表現します。"
-      : "くつろぐ、歩く、食べる、読む、楽しむなどのポーズで表現します。";
-
-    if (state.illustFigure === "include") {
-      figureText = `環境とインタラクトするスタイリッシュな${countText}人間のフィギュアを含めます（${framing}で表現）。${multiNote}`;
-    } else {
-      figureText = `スタイリッシュな${countText}人間のフィギュアを中心に構成します（${framing}で表現）。${multiNote}周囲にテーマのオブジェクトを散りばめます。`;
-    }
-  }
-
-  return [
-    `${theme}をテーマにした、洗練されたフラットベクターの編集パターンイラストを作成してください。`,
-    `テーマに関連する象徴的なオブジェクトやシーンを組み合わせたシームレスなアートコラージュとして構成します。`,
-    "",
-    (state.illustStyleRef || "").trim()
-      ? `${(state.illustStyleRef).trim()}の様式で構成します。`
-      : `北欧ポスターの様式で構成します。`,
-    "",
-    `スタイル：`,
-    `超クリーンなフラットベクターシェイプ / 大胆に簡略化されたシルエット / 遊び心のあるジオメトリック構成 / 強いネガティブスペース / シャープな編集ミニマリズム / スクリーンプリント風のカラーブロッキング / 高コントラストのグラフィックデザイン / ダイナミックな非対称配置 / アウトラインなし / グラデーションなし / フォトリアリズムなし / クリーンなマットな外観 / ファッショナブルなコンテンポラリーポスターエステティック`,
-    "",
-    `構成：`,
-    (state.illustElements || "").trim()
-      ? `${(state.illustElements).trim()}を中心に構成します。関連するオブジェクトやライフスタイル要素とミックスし、プレミアムテキスタイルプリントのようにリズミカルにキャンバス全体へ散りばめます。中央集中型の構成・現実的なパースペクティブを避けます。`
-      : `${theme}の4〜5つの象徴的な要素を、認識可能な抽象シルエットに強く簡略化して含めます。関連するオブジェクトやライフスタイル要素とミックスし、プレミアムテキスタイルプリントのようにリズミカルにキャンバス全体へ散りばめます。中央集中型の構成・現実的なパースペクティブを避けます。`,
-    figureText,
-    "",
-    `カラーシステム：`,
-    `${colorToneFlat[state.illustColorTone] || colorToneFlat.soft}。高度にコントロールされた3色以内に限定。`,
-    "",
-    `背景：`,
-    bgInstructions[state.illustBg] || bgInstructions["solid"],
-    "",
-    `出力：`,
-    `ウルトラプレミアムなシームレス編集イラスト。8K。比率 3:4`,
-  ].join("\n");
-}
-
-const wfSectionsExamples = {
-  top: "1. ヘッダー\n2. KV\n3. サービス紹介\n4. 選ばれる理由\n5. 導入の流れ\n6. お客様の声\n7. お問い合わせフォーム\n8. フッター",
-  sub: "お問い合わせページ、サービス詳細ページ、会社概要ページ",
-  lp: "1. FV\n2. 課題提起\n3. 解決策・特徴\n4. 実績・お客様の声\n5. CTA＋問い合わせフォーム",
-  all: "トップ・サービス紹介・会社概要・お問い合わせ",
-  any: "",
-};
-
 function updateWfSectionsPlaceholder(pageType) {
   const textarea = document.querySelector("#wfSections");
   const currentVal = textarea.value;
@@ -1229,7 +1004,6 @@ function updateWfSectionsPlaceholder(pageType) {
 }
 
 function updateIllustVisibility(mode) {
-  const isIllust    = mode === "illust";
   const isWireframe = mode === "wireframe";
   const isProposal  = mode === "proposal";
   const isUiReview  = mode === "ui-review";
@@ -1243,11 +1017,10 @@ function updateIllustVisibility(mode) {
   const isEmailMode = mode === "email";
 
   // 専用フィールドがあるモード（標準フォームを隠す）
-  const hasDedicated = isIllust || isWireframe || isProposal || isUiReview ||
+  const hasDedicated = isWireframe || isProposal || isUiReview ||
                        isDesign || isResearch || isCompetitor || isSiteDesign || isMinutes || isBrainstorm || isCustom || isEmailMode;
 
   // 各専用fieldsetの表示制御
-  document.querySelector("#fieldset-illust").style.display    = isIllust    ? "" : "none";
   document.querySelector("#fieldset-wireframe").style.display = isWireframe ? "" : "none";
   document.querySelector("#fieldset-proposal").style.display  = isProposal  ? "" : "none";
   document.querySelector("#fieldset-uireview").style.display  = isUiReview  ? "" : "none";
@@ -1271,7 +1044,7 @@ function updateIllustVisibility(mode) {
   document.querySelector("#fieldset-finish").style.display  = hasDedicated ? "none" : "";
 
   // 補足欄: illust/minutes/customは非表示、他の専用モードは表示（下部に）
-  const hideRequest = isIllust || isMinutes || isCustom || isCompetitor || isSiteDesign;
+  const hideRequest = isMinutes || isCustom || isCompetitor || isSiteDesign;
   document.querySelector("#fieldset-request").style.display = hideRequest ? "none" : "";
   document.querySelector("#wfSectionsGroup").style.display = isWireframe ? "" : "none";
   document.querySelector("#wfNotesGroup").style.display = isWireframe ? "" : "none";
@@ -1300,20 +1073,6 @@ function updateIllustVisibility(mode) {
       requestTextarea.placeholder = "ここに相談内容・タスクの詳細を入力してください";
     }
   }
-}
-
-function updateFramingVisibility(figureValue) {
-  const hidden = figureValue === "none";
-  document.querySelector("#framingRow").style.display = hidden ? "none" : "";
-  document.querySelector("#figureCountRow").style.display = hidden ? "none" : "";
-}
-
-function updateIllustStylePanels(styleValue) {
-  const val = styleValue || "flat";
-  document.querySelector("#illustColorToneRow").style.display = val === "icon" ? "none" : "";
-  document.querySelector("#illustFlatFields").style.display   = val === "flat"      ? "" : "none";
-  document.querySelector("#illustIsoFields").style.display    = val === "isometric" ? "" : "none";
-  document.querySelector("#illustIconFields").style.display   = val === "icon"      ? "" : "none";
 }
 
 function renderOptions(mode) {
@@ -1383,7 +1142,6 @@ function numberedList(items) {
 }
 
 function buildPrompt(state) {
-  if (state.mode === "illust") return buildIllustPrompt(state);
   if (state.mode === "proposal") return buildProposalPrompt(state);
   if (state.mode === "ui-review") return buildUiReviewPrompt(state);
   if (state.mode === "design-direction") return buildDesignPrompt(state);
@@ -1529,10 +1287,6 @@ function buildPrompt(state) {
 function updatePrompt() {
   const state = getState();
   updateIllustVisibility(state.mode);
-  if (state.mode === "illust") {
-    updateFramingVisibility(state.illustFigure);
-    updateIllustStylePanels(state.illustStyle);
-  }
   output.value = buildPrompt(state);
   modeHint.textContent = modeHints[state.mode] || "";
   document.querySelector("#previewMode").textContent = modeLabels[state.mode];
@@ -1608,11 +1362,6 @@ fields.mode.addEventListener("change", () => {
 document.querySelector("#copyBtn").addEventListener("click", copyPrompt);
 document.querySelector("#shareBtn").addEventListener("click", shareLink);
 document.querySelector("#resetBtn").addEventListener("click", resetForm);
-fields.illustFigure.addEventListener("change", () => updateFramingVisibility(fields.illustFigure.value));
-fields.illustStyle.addEventListener("change", () => {
-  updateIllustStylePanels(fields.illustStyle.value);
-  updatePrompt();
-});
 fields.wfPageType.addEventListener("change", () => updateWfSectionsPlaceholder(fields.wfPageType.value));
 
 const researchThemePlaceholders = {

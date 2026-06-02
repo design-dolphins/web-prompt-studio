@@ -1,4 +1,4 @@
-# Prompt Maker
+# Prompt Studio
 
 モードを選んで条件を入力するだけで、ChatGPT・画像生成AIに使えるプロンプトを自動生成するローカルWebアプリです。
 
