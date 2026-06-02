@@ -391,7 +391,10 @@ textarea:focus {
 #researchOptionalGroup,
 #brainstormOptionalGroup,
 #compOptionalGroup,
-#siteOptionalGroup {
+#siteOptionalGroup,
+#customOptionalGroup,
+#minutesOptionalGroup,
+#wireframeOptionalGroup {
   display: grid;
   gap: 14px;
 }

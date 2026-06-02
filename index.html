@@ -117,25 +117,29 @@
                 <textarea id="customGoal" name="customGoal" rows="3" placeholder="例：クライアントに制作費の値上げを納得してもらいたい、サイトのキャッチコピーを3案考えたい"></textarea>
               </label>
 
-              <label>
-                対象レベル（任意）
-                <input id="customAudience" name="customAudience" type="text" placeholder="例：小学生でもわかるように、初心者向け、経営層向け" />
-              </label>
+              <div id="customOptionalGroup">
+                <p class="optional-section-label">任意</p>
 
-              <label>
-                背景・状況（任意）
-                <textarea id="customBackground" name="customBackground" rows="3" placeholder="例：BtoB企業のコーポレートサイトリニューアル、予算100万円・納期2ヶ月"></textarea>
-              </label>
+                <label>
+                  対象レベル
+                  <input id="customAudience" name="customAudience" type="text" placeholder="例：小学生でもわかるように、初心者向け、経営層向け" />
+                </label>
 
-              <label>
-                出力形式（任意）
-                <input id="customOutput" name="customOutput" type="text" placeholder="例：箇条書き、表形式、3案で" />
-              </label>
+                <label>
+                  背景・状況
+                  <textarea id="customBackground" name="customBackground" rows="3" placeholder="例：BtoB企業のコーポレートサイトリニューアル、予算100万円・納期2ヶ月"></textarea>
+                </label>
 
-              <label>
-                条件・制約（任意）
-                <textarea id="customConditions" name="customConditions" rows="3" placeholder="例：専門用語を使わない、クライアントが承認しやすい表現で"></textarea>
-              </label>
+                <label>
+                  出力形式
+                  <input id="customOutput" name="customOutput" type="text" placeholder="例：箇条書き、表形式、3案で" />
+                </label>
+
+                <label>
+                  条件・制約
+                  <textarea id="customConditions" name="customConditions" rows="3" placeholder="例：専門用語を使わない、クライアントが承認しやすい表現で"></textarea>
+                </label>
+              </div>
             </fieldset>
 
             <fieldset id="fieldset-brainstorm" style="display:none">
@@ -180,10 +184,14 @@
                 <textarea id="minContent" name="minContent" rows="8" placeholder="ここに議事メモ、文字起こし、Slackログなどを貼り付けてください"></textarea>
               </label>
 
-              <label>
-                どう出してほしいか（任意）
+              <div id="minutesOptionalGroup">
+                <p class="optional-section-label">任意</p>
+
+                <label>
+                  どう出してほしいか
                 <input id="minWish" name="minWish" type="text" placeholder="例：箇条書きを多めに、Slack共有用に短く、決定事項を目立たせて" />
-              </label>
+                </label>
+              </div>
             </fieldset>
 
             <fieldset id="fieldset-sitedesign" style="display:none">
@@ -400,8 +408,11 @@
                 <textarea id="wfMaterials" name="wfMaterials" rows="6" placeholder="企画書・議事録・要件メモ・構成案などをそのまま貼り付けてください。この内容をもとにテキストやセクション構成を考えます。"></textarea>
               </label>
 
-              <label>
-                サイト設計の結果（任意）
+              <div id="wireframeOptionalGroup">
+                <p class="optional-section-label">任意</p>
+
+                <label>
+                  サイト設計の結果
                 <textarea id="wfSiteDesign" name="wfSiteDesign" rows="4" placeholder="サイト設計モードの結果をそのまま貼り付けてください。ページ構成・導線をワイヤーに反映します。"></textarea>
               </label>
             </fieldset>
