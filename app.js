@@ -450,10 +450,8 @@ function buildWireframePrompt(state) {
   ].filter(Boolean);
 
   const wfSectionsRaw = (state.wfSections || "").trim();
-  const knownWfExamples = Object.values(wfSectionsExamples).filter(v => v !== "");
-  const wfSectionsVal = knownWfExamples.includes(wfSectionsRaw) ? "" : wfSectionsRaw;
-  const sectionsText = wfSectionsVal
-    ? `【セクション構成】\n${wfSectionsVal}`
+  const sectionsText = wfSectionsRaw
+    ? `【セクション構成】\n${wfSectionsRaw}`
     : "セクション構成はサイトの目的・業種・ターゲットを考慮してAIが最適な構成を提案してください。";
 
   const outputType = state.wfOutputType === "image" ? "image" : "html";
@@ -472,9 +470,10 @@ function buildWireframePrompt(state) {
     "- 資料にない情報を推測で補った場合はHTML末尾に箇条書きで明記してください。",
   ].join("\n");
 
-  const materialsText = (state.wfMaterials || "").trim();
-  const siteDesignText = (state.wfSiteDesign || "").trim();
-  const notesText = (state.wfRequest || "").trim();
+  const materialsText  = (state.wfMaterials   || "").trim();
+  const siteDesignText = (state.wfSiteDesign  || "").trim();
+  const bgText         = (state.wfRequest     || "").trim();
+  const notesText      = (state.wfNotes       || "").trim();
 
   return [
     "あなたは「Webフロントエンドエンジニア兼UIワイヤーフレーム生成AI」です。",
@@ -496,9 +495,10 @@ function buildWireframePrompt(state) {
     "- 矢印：SVGの矢印を使用",
     "- テキストは添付資料をもとに入力。資料にない場合は推測で補い、末尾に明記する",
     "",
-    materialsText    ? `# 【参考情報・素材】\n${materialsText}`    : null,
-    siteDesignText   ? `# 【サイト設計の結果】\n${siteDesignText}` : null,
-    notesText     ? `# 【補足】\n${notesText}`               : null,
+    materialsText  ? `# 【参考情報・素材】\n${materialsText}`     : null,
+    siteDesignText ? `# 【サイト設計の結果】\n${siteDesignText}` : null,
+    bgText         ? `# 【作成の背景・ひとこと】\n${bgText}`      : null,
+    notesText      ? `# 【補足】\n${notesText}`                   : null,
     "",
     outputType === "image" ? imageRules : htmlRules,
     "",
@@ -1098,13 +1098,8 @@ function buildProposalPrompt(state) {
 
 function updateWfSectionsPlaceholder(pageType) {
   const textarea = document.querySelector("#wfSections");
-  const currentVal = textarea.value;
-  const knownExamples = Object.values(wfSectionsExamples).filter(v => v !== "");
-  const isUnedited = knownExamples.includes(currentVal);
-  if (isUnedited) {
-    textarea.value = wfSectionsExamples[pageType] ?? "";
-    updatePrompt();
-  }
+  textarea.placeholder = wfSectionsExamples[pageType] ?? "";
+  updatePrompt();
 }
 
 function updateIllustVisibility(mode) {
@@ -1456,8 +1451,8 @@ fields.mode.addEventListener("change", () => {
   if (fields.mode.value === "wireframe" && fields.outputType.value !== "image") {
     fields.outputType.value = "html";
   }
-  if (fields.mode.value === "wireframe" && !fields.wfSections.value.trim()) {
-    fields.wfSections.value = wfSectionsExamples[fields.wfPageType.value] ?? "";
+  if (fields.mode.value === "wireframe") {
+    fields.wfSections.placeholder = wfSectionsExamples[fields.wfPageType.value] ?? "";
   }
   renderOptions(fields.mode.value);
   updatePrompt();
