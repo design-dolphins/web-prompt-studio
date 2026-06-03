@@ -603,7 +603,7 @@ function buildMinutesPrompt(state) {
   const isEmail = state.minFormat === "email";
 
   const metaLines = [
-    
+    opt("次回MTG日程", state.minNextMtg),
     opt("どう出してほしいか", state.minWish),
     opt("補足", state.request),
   ].filter(Boolean);
