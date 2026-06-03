@@ -81,6 +81,16 @@ const fields = {
   bsTone: document.querySelector("#bsTone"),
   bsMaterials: document.querySelector("#bsMaterials"),
   bsNotes: document.querySelector("#bsNotes"),
+  minNextMtg: document.querySelector("#minNextMtg"),
+  seoType: document.querySelector("#seoType"),
+  seoUrl: document.querySelector("#seoUrl"),
+  seoSiteName: document.querySelector("#seoSiteName"),
+  seoPages: document.querySelector("#seoPages"),
+  seoKeywords: document.querySelector("#seoKeywords"),
+  seoPrevResult: document.querySelector("#seoPrevResult"),
+  seoTarget: document.querySelector("#seoTarget"),
+  seoTone: document.querySelector("#seoTone"),
+  seoNotes: document.querySelector("#seoNotes"),
   wfRequest: document.querySelector("#wfRequest"),
   designNotes: document.querySelector("#designNotes"),
   uiNotes: document.querySelector("#uiNotes"),
@@ -95,6 +105,7 @@ const modeLabels = {
   minutes: "議事録・要約リライト",
   brainstorm: "アイデア出し",
   sitedesign: "サイト設計",
+  seo: "SEO・メタ情報設計",
   competitor: "競合分析",
   research: "リサーチ・競合分析",
   custom: "自由に作る",
@@ -109,6 +120,7 @@ const modeHints = {
   minutes: "議事録を読みやすく整えたい時。",
   brainstorm: "施策案、企画案、切り口を広げたい時。",
   sitedesign: "サイトの構成・導線・提案をまとめたい時。",
+  seo: "URL・メタタイトル・ディスクリプションをページごとに設計したい時。",
   competitor: "競合サイトを分析して、差別化戦略と打ち出し方を考えたい時。",
   research: "競合、顧客、業界、参考事例を整理したい時。",
   custom: "上にない用途を自由に作りたい時。",
@@ -123,6 +135,7 @@ const exampleRequests = {
   minutes: "プロジェクトキックオフ会議の議事録を整理したい",
   brainstorm: "",
   sitedesign: "",
+  seo: "",
   competitor: "",
   research: "",
   custom: "",
@@ -137,6 +150,7 @@ const roleMap = {
   minutes: "ビジネスコミュニケーション編集AI",
   brainstorm: "戦略プランナー兼アイデアクリエイターAI",
   sitedesign: "Webディレクター兼サイト設計AI",
+  seo: "SEOコンサルタント兼Webディレクター",
   competitor: "Web戦略コンサルタント兼競合分析AI",
   research: "市場分析コンサルタント兼リサーチAI",
   custom: "プロンプトエンジニア兼専門領域支援AI",
@@ -597,6 +611,11 @@ function buildMinutesPrompt(state) {
   if (isEmail) {
     const today = new Date();
     const dateStr = `${today.getMonth() + 1}/${today.getDate()}`;
+    const nextMtg = (state.minNextMtg || "").trim();
+    const nextMtgLine = nextMtg
+      ? `【固定テキスト】\n4. 次回のお打ち合わせ\n${nextMtg}\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿`
+      : "";
+
     return [
       "あなたは「ビジネスコミュニケーション編集AI」です。",
       "以下の議事メモ・文字起こしをもとに、クライアントへ送付できるメール形式の議事録メールを作成してください。",
@@ -610,12 +629,15 @@ function buildMinutesPrompt(state) {
       "# 【出力形式】",
       "以下のフォーマットに沿って出力してください。【固定テキスト】と書かれた部分は一字一句そのまま出力し、【生成】と書かれた部分だけ議事メモをもとに作成してください。",
       "",
+      "【生成】",
+      `件名：【議事録】${dateStr}お打ち合わせ（会社名や案件名があれば補完して）`,
+      "",
       "⚫︎⚫︎様",
       "",
       "お世話になっております。",
       "⚫︎⚫︎でございます。",
       "",
-      "本日もお時間をいただき誠にありがとうございました。",
+      "本日はお時間をいただき誠にありがとうございました。",
       "下記に、議事録とネクストアクションをご案内させていただきます。",
       "＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿",
       "",
@@ -623,7 +645,7 @@ function buildMinutesPrompt(state) {
       `1. ${dateStr}お打ち合わせ 議事録`,
       "本日のお打ち合わせの内容をご共有いたします。",
       "▼議事録",
-      "（urlを添付する）",
+      "（議事録のURLがあれば記載。なければこの行ごと省略）",
       "※上記、閲覧の際に支障がございましたらお知らせくださいませ。",
       "＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿",
       "",
@@ -634,13 +656,15 @@ function buildMinutesPrompt(state) {
       "",
       "【生成】",
       "3. ネクストアクション",
-      "▼お客様の宿題",
+      "▼お客様 対応事項",
       "・（箇条書き）",
       "—",
-      "▼弊社の宿題",
+      "▼弊社 対応事項",
       "・（箇条書き）",
       "＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿",
       "",
+      nextMtgLine,
+      nextMtgLine ? "" : null,
       "【固定テキスト】",
       "以上になります。",
       "ご不明点がございましたらご連絡くださいませ。",
@@ -653,7 +677,7 @@ function buildMinutesPrompt(state) {
       "- ビジネスマナーを維持した丁寧な文体にする",
       "",
       "以上の内容を確認しました。それでは今すぐ作業を開始してください。",
-    ].join("\n");
+    ].filter(v => v !== null).join("\n");
   }
 
   return [
@@ -774,9 +798,8 @@ function buildSiteDesignPrompt(state) {
     "2. 現状の課題と背景",
     "3. 提案するサイトの方向性（なぜこのアプローチか）",
     "4. ページ構成案（各ページの役割付き）",
-    "5. サイトマップ（ツリー形式で出力。例：HOME ├ サービス ├ 実績 └ お問い合わせ）",
-    "6. ユーザー導線（メインの流れを2〜3パターン）",
-    "7. 期待できる効果・成果指標",
+    "5. ユーザー導線（メインの流れを2〜3パターン）",
+    "6. 期待できる効果・成果指標",
     isSlide
       ? [
           "7. スライド構成案（表形式）",
@@ -788,6 +811,74 @@ function buildSiteDesignPrompt(state) {
     "",
     "以上を確認しました。それでは今すぐ作業を開始してください。",
   ].filter(v => v !== null).join("\n");
+}
+
+function buildSeoPrompt(state) {
+  const opt = (label, val) => (val || "").trim() ? `- ${label}：${val.trim()}` : null;
+  const isExisting = state.seoType === "existing";
+  const siteName   = (state.seoSiteName   || "").trim();
+  const pages      = (state.seoPages      || "").trim();
+  const keywords   = (state.seoKeywords   || "").trim();
+  const url        = (state.seoUrl        || "").trim();
+  const prevResult = (state.seoPrevResult || "").trim();
+  const target     = (state.seoTarget     || "").trim();
+  const tone       = (state.seoTone       || "").trim();
+  const notes      = (state.seoNotes      || "").trim();
+
+  const infoLines = [
+    siteName   ? `- サイト名：${siteName}` : null,
+    keywords   ? `- 狙いたいキーワード：${keywords}` : null,
+    target     ? `- ターゲット：${target}` : null,
+    tone       ? `- ブランドのトーン：${tone}` : null,
+    notes      ? `- 補足：${notes}` : null,
+  ].filter(Boolean);
+
+  const urlSection = isExisting && url
+    ? `# 【既存サイトの確認】\n以下のURLにアクセスして、各ページの現在のメタタイトル・メタディスクリプションを確認してから改善案を提案してください。\nサイトURL：${url}\n\n`
+    : "";
+
+  const prevSection = prevResult ? `# 【サイト設計の結果】\n${prevResult}\n\n` : "";
+  const pagesSection = pages
+    ? `# 【対象ページ】\n${pages}`
+    : "# 【対象ページ】\n（ページ情報がここに入ります）";
+
+  return [
+    "あなたは「SEOコンサルタント兼Webディレクター」です。",
+    "以下の情報をもとに、各ページのURL・メタタイトル・メタディスクリプションを設計してください。",
+    "",
+    urlSection,
+    prevSection,
+    pagesSection,
+    "",
+    "# 【サイト情報】",
+    ...infoLines,
+    "",
+    "# 【出力形式】",
+    "各ページについて以下の形式で出力してください。",
+    "",
+    "---",
+    "## ページ名",
+    "- URL：/xxx（英小文字・ハイフン区切り）",
+    "- メタタイトル：〇〇（全角30文字以内・半角60文字以内）",
+    "- メタディスクリプション：〇〇（全角120文字以内）",
+    "---",
+    "",
+    "全ページ出力後に、サイト全体のサイトマップをツリー形式で出力してください。",
+    "例：",
+    "HOME（/）",
+    "├ サービス（/service）",
+    "├ 実績（/works）",
+    "└ お問い合わせ（/contact）",
+    "",
+    "# 【制約条件】",
+    "- メタタイトルはキーワードを自然に含め、クリックしたくなる文言にする",
+    "- メタディスクリプションは内容を簡潔に伝え、行動を促す表現にする",
+    "- URLは短く・意味が伝わる英語スラッグにする（日本語・大文字・スペース禁止）",
+    "- ページ間でメタ情報が重複しないよう各ページで差別化する",
+    isExisting ? "- 既存のメタ情報と比較して改善点を明示する" : null,
+    "",
+    "以上を確認しました。それでは今すぐ作業を開始してください。",
+  ].filter(v => v !== null && v !== "").join("\n");
 }
 
 function buildCompetitorPrompt(state) {
@@ -1014,6 +1105,7 @@ function updateIllustVisibility(mode) {
   const isUiReview  = mode === "ui-review";
   const isDesign    = mode === "design-direction";
   const isSiteDesign = mode === "sitedesign";
+  const isSeo       = mode === "seo";
   const isCompetitor = mode === "competitor";
   const isResearch  = mode === "research";
   const isMinutes   = mode === "minutes";
@@ -1023,7 +1115,7 @@ function updateIllustVisibility(mode) {
 
   // 専用フィールドがあるモード（標準フォームを隠す）
   const hasDedicated = isWireframe || isProposal || isUiReview ||
-                       isDesign || isResearch || isCompetitor || isSiteDesign || isMinutes || isBrainstorm || isCustom || isEmailMode;
+                       isDesign || isResearch || isCompetitor || isSiteDesign || isSeo || isMinutes || isBrainstorm || isCustom || isEmailMode;
 
   // 各専用fieldsetの表示制御
   document.querySelector("#fieldset-wireframe").style.display = isWireframe ? "" : "none";
@@ -1031,6 +1123,7 @@ function updateIllustVisibility(mode) {
   document.querySelector("#fieldset-uireview").style.display  = isUiReview  ? "" : "none";
   document.querySelector("#fieldset-design").style.display    = isDesign    ? "" : "none";
   document.querySelector("#fieldset-sitedesign").style.display = isSiteDesign ? "" : "none";
+  document.querySelector("#fieldset-seo").style.display        = isSeo        ? "" : "none";
   document.querySelector("#fieldset-competitor").style.display = isCompetitor ? "" : "none";
   document.querySelector("#fieldset-research").style.display  = isResearch  ? "" : "none";
   if (isResearch) {
@@ -1049,7 +1142,7 @@ function updateIllustVisibility(mode) {
   document.querySelector("#fieldset-finish").style.display  = hasDedicated ? "none" : "";
 
   // 補足欄: illust/minutes/customは非表示、他の専用モードは表示（下部に）
-  const hideRequest = isMinutes || isCustom || isCompetitor || isSiteDesign || isBrainstorm || isWireframe || isDesign || isUiReview;
+  const hideRequest = isMinutes || isCustom || isCompetitor || isSiteDesign || isSeo || isBrainstorm || isWireframe || isDesign || isUiReview;
   document.querySelector("#fieldset-request").style.display = hideRequest ? "none" : "";
   document.querySelector("#designOptionalGroup").style.display = isDesign ? "" : "none";
   document.querySelector("#researchOptionalGroup").style.display = isResearch ? "" : "none";
@@ -1147,6 +1240,7 @@ function buildPrompt(state) {
   if (state.mode === "ui-review") return buildUiReviewPrompt(state);
   if (state.mode === "design-direction") return buildDesignPrompt(state);
   if (state.mode === "sitedesign") return buildSiteDesignPrompt(state);
+  if (state.mode === "seo") return buildSeoPrompt(state);
   if (state.mode === "competitor") return buildCompetitorPrompt(state);
   if (state.mode === "research") return buildResearchPrompt(state);
   if (state.mode === "minutes") return buildMinutesPrompt(state);
@@ -1376,6 +1470,12 @@ const researchThemePlaceholders = {
 fields.researchPurpose.addEventListener("change", () => {
   const theme = document.querySelector("#researchTheme");
   if (theme) theme.placeholder = researchThemePlaceholders[fields.researchPurpose.value] || "";
+  updatePrompt();
+});
+
+fields.seoType.addEventListener("change", () => {
+  const isExisting = fields.seoType.value === "existing";
+  document.querySelector("#seoUrlGroup").style.display = isExisting ? "" : "none";
   updatePrompt();
 });
 
