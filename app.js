@@ -105,7 +105,7 @@ const modeLabels = {
   minutes: "議事録・要約リライト",
   brainstorm: "アイデア出し",
   sitedesign: "サイト設計",
-  seo: "SEO・メタ情報設計",
+  seo: "サイトマップ・メタ情報設計",
   competitor: "競合分析",
   research: "リサーチ・競合分析",
   custom: "自由に作る",
