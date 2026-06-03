@@ -426,6 +426,14 @@ const defaults = {
   customConditions: "",
 };
 
+const wfSectionsExamples = {
+  top: "1. ヘッダー\n2. KV\n3. サービス紹介\n4. 選ばれる理由\n5. 導入の流れ\n6. お客様の声\n7. お問い合わせフォーム\n8. フッター",
+  sub: "お問い合わせページ、サービス詳細ページ、会社概要ページ",
+  lp: "1. FV\n2. 課題提起\n3. 解決策・特徴\n4. 実績・お客様の声\n5. CTA＋問い合わせフォーム",
+  all: "トップ・サービス紹介・会社概要・お問い合わせ",
+  any: "",
+};
+
 function buildWireframePrompt(state) {
   const opt = (label, val) => (val || "").trim() ? `- ${label}：${val.trim()}` : null;
   const pageTypeLabels = {
