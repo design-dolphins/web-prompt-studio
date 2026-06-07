@@ -32,6 +32,7 @@
                   <option value="custom">自由に作る</option>
                   <option value="brainstorm">アイデア出し</option>
                   <option value="minutes">議事録・要約リライト</option>
+                  <option value="task">やること整理</option>
                   <option value="competitor">競合分析</option>
                   <option value="sitedesign">サイト設計</option>
                   <option value="seo">サイトマップ・メタ情報設計</option>
@@ -341,6 +342,51 @@
                 <label>
                   補足・その他
                   <textarea id="seoNotes" name="seoNotes" rows="3" placeholder="例：追加で気になる点や希望があれば"></textarea>
+                </label>
+              </div>
+
+            </fieldset>
+
+                        <fieldset id="fieldset-task" style="display:none">
+              <legend>やること整理</legend>
+              <p class="optional-section-label" style="font-weight:400; font-size:0.8rem; color:#A4A4A4; border:none; padding-top:0;">議事録・メモ・現状をそのまま貼り付けてもOK</p>
+
+              <label>
+                役割
+                <select id="taskRole" name="taskRole">
+                  <option value="director">ディレクター</option>
+                  <option value="designer">デザイナー</option>
+                  <option value="director-designer">ディレクター兼デザイナー</option>
+                  <option value="coder">コーダー</option>
+                </select>
+              </label>
+
+              <label>
+                現状・状況説明
+                <textarea id="taskSituation" name="taskSituation" rows="6" placeholder="依頼・メッセージ・議事録をそのまま貼り付けるか、状況を説明してください"></textarea>
+              </label>
+
+              <div id="taskOptionalGroup">
+                <p class="optional-section-label">任意</p>
+
+                <label>
+                  プロジェクトの種類
+                  <input id="taskType" name="taskType" type="text" placeholder="例：コーポレートサイト制作（WordPress）" />
+                </label>
+
+                <label>
+                  気になっていること
+                  <textarea id="taskConcern" name="taskConcern" rows="3" placeholder="例：CMSの実装範囲をコーダーに伝えてないかもしれない。インフラ手配が誰の担当か決まっていない。サーバー移管って誰に頼むんだっけ。SSL証明書の更新タイミングを確認したい。"></textarea>
+                </label>
+
+                <label>
+                  納期・フェーズ
+                  <input id="taskDeadline" name="taskDeadline" type="text" placeholder="例：公開3週間後、現在デザイン確認フェーズ" />
+                </label>
+
+                <label>
+                  補足
+                  <textarea id="taskNotes" name="taskNotes" rows="3" placeholder="例：コーダーは外注。インフラはクライアント側の予定だが未確認。"></textarea>
                 </label>
               </div>
 
